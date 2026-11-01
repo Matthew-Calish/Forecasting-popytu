@@ -66,3 +66,12 @@ C = B + [
 
 VARIANTS = {"A": A, "B": B, "C": C}
 EXTERNAL_COLS = [c for c in C if c not in A]
+
+
+# MODELE BAZOWE (BASELINE)
+BASELINES = {
+    "Baseline_Lag1": "lag_1",
+    "Baseline_Lag7": "lag_7",
+    "Baseline_RollMean7": "roll_mean_7",
+}
+
