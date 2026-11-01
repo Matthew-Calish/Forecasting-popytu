@@ -7,10 +7,15 @@ Jeśli ktoś zmienia coś TUTAJ, zmiana obowiązuje cały projekt.
 
 """
 
-# WAŻNE PLIKI
+# WAŻNE PLIKI I KATALOGI
 RAW_CSV = "data_raw.csv"
 DATA_CSV = "data_clean.csv"
 MODEL_DATA = "features.parquet"
+
+EDA_PLOTS_DIR = "plots/eda"
+MODEL_PLOTS_DIR = "plots/models"
+SHAP_PLOTS_DIR = "plots/shap"
+RESULTS_DIR = "results"
 
 
 # WAŻNE POLA
