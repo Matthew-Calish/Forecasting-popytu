@@ -75,3 +75,28 @@ BASELINES = {
     "Baseline_RollMean7": "roll_mean_7",
 }
 
+# NAZWY WARIANTÓW MODELU LIGHTGBM
+VARIANT_LABELS = {
+    "A": "LGBM_Variant_A",
+    "B": "LGBM_Variant_B",
+    "C": "LGBM_Variant_C",
+}
+
+# HIPERPARAMETRY LIGHTGBM
+LGBM_PARAMS = {
+    "objective": "regression",
+    "n_estimators": 600,
+    "learning_rate": 0.03,
+    "num_leaves": 15,
+    "max_depth": 5,
+    "min_child_samples": 12,
+    "subsample": 0.85,
+    "subsample_freq": 1,
+    "colsample_bytree": 0.85,
+    "reg_alpha": 1.0,
+    "reg_lambda": 2.0,
+    "random_state": 42,
+    "verbose": -1,
+}
+
+
