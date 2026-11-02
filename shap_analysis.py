@@ -1,7 +1,5 @@
 """
-shap_analysis.py:
-Interpretowalność SHAP (TreeExplainer) oraz ilościowa i wizualna analiza
-wpływu zmiennych zewnętrznych (EXTERNAL_COLS) na prognozy dziennego popytu.
+shap_analysis.py: Interpretowalność SHAP oraz ilościowa i wizualna analiza wpływu zmiennych zewnętrznych na prognozy dziennego popytu.
 """
 
 from pathlib import Path
@@ -24,10 +22,12 @@ def ensure_dirs():
 
 
 def compute_shap_values(variant: str = "C"):
+
     """
     Trenuje model LightGBM dla wskazanego wariantu (domyślnie najlepszy Wariant C)
     i oblicza wartości SHAP na zbiorze testowym za pomocą shap.TreeExplainer.
     """
+
     ensure_dirs()
     df = tm.prepare_categories(cf.load_model_data())
     _, _, test = cf.split_by_date(df)
@@ -45,10 +45,11 @@ def compute_shap_values(variant: str = "C"):
 
 
 def build_shap_impact_table(explanation, X_test: pd.DataFrame, save: bool = True) -> tuple[pd.DataFrame, pd.DataFrame]:
+
     """
-    Tworzy tabelę wpływu poszczególnych cech (Mean |SHAP|, udział %, min/max korekta)
-    oraz podsumowanie grupowe: Historia/Kalendarz (Wariant A) vs Zmienne zewnętrzne (EXTERNAL_COLS).
+    Tworzy tabelę wpływu poszczególnych cech oraz podsumowanie grupowe: Historia/Kalendarz vs Zmienne zewnętrzne.
     """
+
     ensure_dirs()
     shap_vals = explanation.values
     mean_abs = np.abs(shap_vals).mean(axis=0)
@@ -90,7 +91,9 @@ def build_shap_impact_table(explanation, X_test: pd.DataFrame, save: bool = True
 
 
 def plot_shap_beeswarm(explanation, X_test: pd.DataFrame, save: bool = True):
+
     """Wykres 1: Globalny rozkład wpływu cech SHAP (Beeswarm Summary Plot)."""
+
     ensure_dirs()
     fig = plt.figure(figsize=(11, 7.5))
     shap.plots.beeswarm(explanation, max_display=20, show=False)
@@ -107,7 +110,9 @@ def plot_shap_beeswarm(explanation, X_test: pd.DataFrame, save: bool = True):
 
 
 def plot_shap_importance_bar(impact_df: pd.DataFrame, group_summary: pd.DataFrame, save: bool = True):
+
     """Wykres 2: Ranking ważności cech wg Mean |SHAP| z wyróżnieniem zmiennych zewnętrznych."""
+
     ensure_dirs()
     fig, ax = plt.subplots(figsize=(11.5, 7))
 
@@ -148,7 +153,9 @@ def plot_shap_importance_bar(impact_df: pd.DataFrame, group_summary: pd.DataFram
 
 
 def plot_shap_weather_dependence(explanation, X_test: pd.DataFrame, test_df: pd.DataFrame, save: bool = True):
+
     """Wykres 3: Wykresy zależności SHAP (Dependence Plots) dla kluczowych zmiennych pogodowych."""
+
     ensure_dirs()
     shap_vals = explanation.values
     cols = list(X_test.columns)
@@ -195,12 +202,14 @@ def plot_shap_weather_dependence(explanation, X_test: pd.DataFrame, test_df: pd.
 
 
 def select_case_study_days(test_df: pd.DataFrame) -> list[tuple[int, str]]:
+
     """
-    Wybiera 3 reprezentatywne dni ze zbioru testowego do analizy lokalnej (Waterfall):
-    1) Dzień załamania pogody (weather == 'Bad' o wysokim popycie dzień wcześniej),
-    2) Dzień bardzo dobrej, ciepłej pogody (weather == 'Clear'),
-    3) Dzień świąteczny (is_holiday == 1).
+    Wybiera 3 reprezentatywne dni ze zbioru testowego do analizy lokalnej:
+    1) Dzień załamania pogody,
+    2) Dzień bardzo dobrej, ciepłej pogody,
+    3) Dzień świąteczny.
     """
+
     bad_candidates = test_df[test_df["weather"] == "Bad"].sort_values("lag_1", ascending=False)
     bad_idx = int(bad_candidates.index[0])
 
@@ -218,7 +227,9 @@ def select_case_study_days(test_df: pd.DataFrame) -> list[tuple[int, str]]:
 
 
 def plot_shap_waterfalls(explanation, test_df: pd.DataFrame, save: bool = True) -> list:
+
     """Wykresy 4a-4c: Lokalna interpretacja SHAP Waterfall dla 3 wybranych dni."""
+
     ensure_dirs()
     cases = select_case_study_days(test_df)
     figs = []
@@ -251,6 +262,7 @@ def plot_shap_waterfalls(explanation, test_df: pd.DataFrame, save: bool = True) 
         # shap.plots.waterfall tworzy 3 współdzielone osie (główną + dolną E[f(X)] + górną f(x)).
         # Poszerzamy zakres X na wszystkich trzech osiach jednocześnie, aby etykiety ujemnych
         # słupków nie nachodziły na nazwy cech na osi Y.
+
         xmin, xmax = fig.axes[0].get_xlim()
         span = xmax - xmin
         for a in fig.axes:
@@ -271,7 +283,9 @@ def plot_shap_waterfalls(explanation, test_df: pd.DataFrame, save: bool = True) 
 
 
 def run_all_shap(save: bool = True):
+
     """Uruchamia pełną analizę SHAP (Etap 3), zapisuje tabele i wykresy."""
+    
     explanation, explainer, model, X_test, test_df = compute_shap_values(variant="C")
     impact_df, group_summary = build_shap_impact_table(explanation, X_test, save=save)
 

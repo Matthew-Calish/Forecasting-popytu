@@ -1,6 +1,5 @@
 """
-train_models.py: Modele bazowe (Baseline), trening LightGBM w wariantach A, B, C (Ablacja)
-oraz ewaluacja i wizualizacja wyników na zbiorze walidacyjnym i testowym.
+train_models.py: Modele bazowe, trening LightGBM w wariantach A, B, C oraz ewaluacja i wizualizacja wyników na zbiorze walidacyjnym i testowym.
 """
 
 from pathlib import Path
@@ -27,7 +26,9 @@ def ensure_dirs():
 
 
 def prepare_categories(df: pd.DataFrame) -> pd.DataFrame:
+
     """Upewnia się, że kolumny kategoryczne mają stałe kategorie z project_config.py."""
+
     df = df.copy()
     df["season"] = pd.Categorical(df["season"], categories=cfg.SEASONS)
     df["weather"] = pd.Categorical(df["weather"], categories=cfg.WHEATER)
@@ -36,7 +37,9 @@ def prepare_categories(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def compute_metrics(y_true, y_pred) -> dict:
+
     """Oblicza wspólny zestaw metryk błędu prognozy (MAE, RMSE, MAPE [%], R2)."""
+
     mae = mean_absolute_error(y_true, y_pred)
     rmse = root_mean_squared_error(y_true, y_pred)
     mape = mean_absolute_percentage_error(y_true, y_pred) * 100.0
@@ -50,10 +53,12 @@ def compute_metrics(y_true, y_pred) -> dict:
 
 
 def evaluate_baselines(df: pd.DataFrame | None = None) -> pd.DataFrame:
+
     """
     Oblicza metryki na zbiorze walidacyjnym (val) i testowym (test)
     dla modeli bazowych zdefiniowanych w project_config.py (BASELINES).
     """
+
     if df is None:
         df = cf.load_model_data()
 
@@ -81,17 +86,8 @@ def evaluate_baselines(df: pd.DataFrame | None = None) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
-# =====================================================================
-# ETAP 2.2: TRENING LIGHTGBM (WARIANTY A, B, C) I WYKRESY ABLACJI
-# =====================================================================
-
 def train_and_evaluate(df: pd.DataFrame | None = None, save: bool = True):
-    """
-    Łączy wyniki Baseline (Etap 2.1) z treningiem modeli LightGBM dla wariantów A, B i C (Etap 2.2):
-    1) Trenuje LightGBM na zbiorze train z early_stopping na val (ocena na val + dobór liczby drzew).
-    2) Doucza (refit) model na połączonym zbiorze (train + val) do wyznaczonej liczby drzew,
-       aby prognozować zbiór testowy (od 2012-09-01) z wiedzą historyczną do końca sierpnia 2012.
-    """
+
     ensure_dirs()
     if df is None:
         df = cf.load_model_data()
@@ -197,7 +193,9 @@ def train_and_evaluate(df: pd.DataFrame | None = None, save: bool = True):
 
 
 def plot_ablation_metrics(metrics_df: pd.DataFrame, save: bool = True):
+
     """Wykres 1: Porównanie błędów MAE i RMSE na zbiorze testowym (Baseline vs Warianty A, B, C)."""
+
     ensure_dirs()
     fig, axes = plt.subplots(1, 2, figsize=(13.5, 5))
 
@@ -234,7 +232,9 @@ def plot_ablation_metrics(metrics_df: pd.DataFrame, save: bool = True):
 
 
 def plot_forecast_vs_actual(test_preds_df: pd.DataFrame, save: bool = True):
+
     """Wykres 2: Przebieg prognozy Wariantu A vs Wariantu B/C na tle rzeczywistego popytu w zbiorze testowym."""
+
     ensure_dirs()
     col_a = cfg.VARIANT_LABELS["A"]
     col_b = cfg.VARIANT_LABELS["B"]
@@ -276,7 +276,9 @@ def plot_forecast_vs_actual(test_preds_df: pd.DataFrame, save: bool = True):
 
 
 def plot_residuals_by_weather(test_preds_df: pd.DataFrame, save: bool = True):
+
     """Wykres 3: Porównanie bezwzględnych błędów predykcji Wariantu A vs B vs C w podziale na pogodę."""
+
     ensure_dirs()
     col_a = cfg.VARIANT_LABELS["A"]
     col_b = cfg.VARIANT_LABELS["B"]
@@ -317,7 +319,9 @@ def plot_residuals_by_weather(test_preds_df: pd.DataFrame, save: bool = True):
 
 
 def run_all_training(save: bool = True):
+
     """Uruchamia pełny Etap 2 (Baseline + LightGBM A/B/C + wykresy ablacji)."""
+    
     metrics_df, test_preds_df, trained_models = train_and_evaluate(save=save)
 
     print("=== ETAP 2.2: PORÓWNANIE MODELI I WARIANTÓW CECH (ABLACJA A vs B vs C) ===")

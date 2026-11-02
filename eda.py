@@ -19,7 +19,9 @@ def ensure_dirs():
 
 
 def get_dataset_summary(df: pd.DataFrame) -> dict:
+
     """Zwraca słownik z tabelami podsumowującymi zbiór danych oraz podział czasowy."""
+
     train, val, test = cf.split_by_date(df)
 
     split_summary = pd.DataFrame([
@@ -47,7 +49,9 @@ def get_dataset_summary(df: pd.DataFrame) -> dict:
 
 
 def plot_demand_split(df: pd.DataFrame, save: bool = True):
+
     """Wykres 1: Szereg czasowy popytu z podziałem na train / val / test."""
+
     ensure_dirs()
     train, val, test = cf.split_by_date(df)
 
@@ -81,7 +85,9 @@ def plot_demand_split(df: pd.DataFrame, save: bool = True):
 
 
 def plot_weather_season_boxplots(df: pd.DataFrame, save: bool = True):
+
     """Wykres 2: Rozkład popytu względem pory roku, pogody oraz typu dnia."""
+
     ensure_dirs()
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.8), sharey=True)
 
@@ -123,7 +129,9 @@ def plot_weather_season_boxplots(df: pd.DataFrame, save: bool = True):
 
 
 def plot_temp_humidity_scatter(df: pd.DataFrame, save: bool = True):
+
     """Wykres 3: Zależność popytu od temperatury i wilgotności z podziałem na pogodę."""
+
     ensure_dirs()
     fig, axes = plt.subplots(1, 2, figsize=(13.5, 5), sharey=True)
 
@@ -160,7 +168,9 @@ def plot_temp_humidity_scatter(df: pd.DataFrame, save: bool = True):
 
 
 def plot_correlation_matrix(df: pd.DataFrame, save: bool = True):
+
     """Wykres 4: Macierz korelacji cech numerycznych z popytem."""
+
     ensure_dirs()
     cols = [
         cfg.TARGET, "lag_1", "lag_7", "lag_14",
@@ -183,7 +193,9 @@ def plot_correlation_matrix(df: pd.DataFrame, save: bool = True):
 
 
 def run_all_eda(save: bool = True):
+
     """Uruchamia pełne EDA, zapisuje wykresy i wypisuje statystyki."""
+    
     df = cf.load_model_data()
     summary = get_dataset_summary(df)
 
